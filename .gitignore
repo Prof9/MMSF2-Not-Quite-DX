@@ -1,0 +1,16 @@
+# ROMs and build output
+_rom/*
+!_rom/roms_go_here.txt
+
+# Temp folder
+_temp/
+
+# Third party tools
+tools/*.exe
+tools/*.dll
+!tools/LibTextPet.dll
+!tools/sfarctool.exe
+!tools/TextPet.exe
+
+# Shortcuts
+*.lnk

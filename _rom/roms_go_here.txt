@@ -1,0 +1,7 @@
+Place the following ROMs here:
+
+ *  zxs-us.nds
+    Mega Man Star Force 2: Zerker x Saurian (US)
+
+ *  zxn-us.nds
+    Mega Man Star Force 2: Zerker x Ninja (US)
