@@ -10,6 +10,8 @@
 
 .org 0x20E74AC	// Overwrite unused checkSaveStart command
 	.dw	common_textCmdItemGiveEventCard|1
+.org 0x20E74D4	// Overwrite unused checkSatelliteRegistration command
+	.dw	common_textCmdCheckTotalBattleCards|1
 
 .org 0x2012CFC	// First encounter check
 	.dw	(4000)		// 250 -> 400 (SF3 = 400)
@@ -66,8 +68,6 @@ common_getStepCounterDelta:
 	mov	r0,r4
 	pop	r4,r15
 
-	.pool
-
 
 .align 2
 common_resetEncounterRate:
@@ -89,6 +89,7 @@ common_resetEncounterRate:
 @@end:
 	pop	r15
 
+
 .align 2
 common_getHighSPBossRate:
 	// Check if Cloaker active
@@ -103,6 +104,30 @@ common_getHighSPBossRate:
 	mov	r0,(10)		// 1-in-10
 @@end:
 	pop	r3,r15
+
+
+.align 2
+common_checkSlotInOrGameClear:
+	// Expanded MMBN game check
+	push	r14
+
+	// r0 already set
+	bl	0x202BED8	// check MMBN game inserted
+	cmp	r0,0x0
+	bne	@@end
+
+	// Check game clear flag
+	ldr	r0,=0x210FA4C
+	ldr	r0,[r0]
+	mov	r1,(0x900 >> 0x8)
+	lsl	r1,r1,0x8
+	bl	0x202A4D0	// check flag
+
+@@end:
+	pop	r15
+
+
+	.pool
 
 common_stepCounterRates:
 	.db	10,  6	// 80 00 - (unused)
@@ -656,24 +681,46 @@ common_textCmdItemGiveEventCard:
 
 
 .align 2
-common_checkSlotInOrGameClear:
-	// Expanded MMBN game check
-	push	r14
+common_textCmdCheckTotalBattleCards:
+	// checkTotalBattleCards text command handler
+	push	r4-r5,r14
+	mov	r4,r0
 
-	// r0 already set
-	bl	0x202BED8	// check MMBN game inserted
+	// Load card count parameter
+//	mov	r0,r4
+	ldr	r1,[r4,0x10]	// script pointer
+	add	r1,0x2
+	bl	0x20268D4	// load u16
+	mov	r5,r0
+
+	// Get number of cards player has
+	ldr	r0,=0x20F47FC
+	ldr	r0,[r0]
+	mov	r1,0x0
+	bl	0x200C8E0	// get total number of cards
+
+	ldr	r1,[r4,0x10]
+	add	r1,0x4		// enough
+	cmp	r0,r5
+	bhs	@@jump		// higher or same
+	add	r1,0x1		// not enough
+
+@@jump:
+	// Do jump
+	mov	r0,r4
+	ldrb	r1,[r1]		// load u8
+	bl	0x2025E6C
 	cmp	r0,0x0
 	bne	@@end
 
-	// Check game clear flag
-	ldr	r0,=0x210FA4C
-	ldr	r0,[r0]
-	mov	r1,(0x900 >> 0x8)
-	lsl	r1,r1,0x8
-	bl	0x202A4D0	// check flag
+	// Advance script handler
+	mov	r0,r4
+	mov	r1,0x6
+	bl	0x20268FC
 
 @@end:
-	pop	r15
+	mov	r0,0x0		// script continues
+	pop	r4-r5,r15
 
 
 	.pool

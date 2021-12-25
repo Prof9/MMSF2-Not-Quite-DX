@@ -43,7 +43,7 @@ script 42 mmsf2 {
 	end
 }
 script 45 mmsf2 {
-	checkBoxCards
+	checkTotalBattleCards
 		amount = 500
 		jumpIfEnough = 47
 		jumpIfNotEnough = 46
@@ -54,13 +54,13 @@ script 46 mmsf2 {
 	mugshotHide
 	"""
 	This door shall open
-	for he who holds
+	for he who has
 	"""
 	keyWait1
 	clearMsg
 	"""
-	500 Battle Cards
-	in his Card Box...
+	amassed a total of
+	500 Battle Cards...
 	"""
 	keyWait2
 	end
@@ -70,13 +70,13 @@ script 47 mmsf2 {
 	mugshotHide
 	"""
 	This door shall open
-	for he who holds
+	for he who has
 	"""
 	keyWait1
 	clearMsg
 	"""
-	500 Battle Cards
-	in his Card Box...
+	amassed a total of
+	500 Battle Cards...
 	"""
 	keyWait2
 	flagClear
